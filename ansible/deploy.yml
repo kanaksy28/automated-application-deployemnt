@@ -1,0 +1,25 @@
+---
+- name: Deploy Automated Application
+  hosts: webserver
+  gather_facts: false
+
+  tasks:
+
+    - name: Stop old application container
+      command: docker stop automated-app
+      ignore_errors: true
+
+    - name: Remove old application container
+      command: docker rm automated-app
+      ignore_errors: true
+
+    - name: Run new application container
+      command: docker run -d -p 3000:3000 --name automated-app automated-app:1.0
+
+    - name: Display running containers
+      command: docker ps
+      register: docker_output
+
+    - name: Show deployment status
+      debug:
+        var: docker_output.stdout_lines
